@@ -6,6 +6,7 @@ public class GrowingObject : MonoBehaviour
 {
     public GameObject[] cropStages;
     public ResourcesManager resourcesManager;
+    public ParticleSystem breakParticles;
 
     public float totalCropTime;
 
@@ -78,9 +79,9 @@ public class GrowingObject : MonoBehaviour
 
     public void ResetGrowth()
     {
-        cropStages[0].SetActive(false);
-        cropStages[1].SetActive(false);
-        cropStages[2].SetActive(false);
+        LeanTween.scale(cropStages[2], new Vector3(0f, 0f, 0f), 0.075f).setOnComplete(Deactivate);
+
+        breakParticles.Play();
 
         sprout = false;
         midStage = false;
@@ -90,5 +91,14 @@ public class GrowingObject : MonoBehaviour
         timeLeft = totalCropTime;
 
         resourcesManager.wheatAmountText.text = ($"{resourcesManager.wheatAmount}");
+    }
+
+    void Deactivate()
+    {
+        cropStages[2].transform.localScale = new Vector3(1f, 1f, 1f);
+
+        cropStages[0].SetActive(false);
+        cropStages[1].SetActive(false);
+        cropStages[2].SetActive(false);
     }
 }
